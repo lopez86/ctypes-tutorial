@@ -3,7 +3,7 @@ LIBFLAGS = --shared
 
 all: lib
 
-banking.o: banking.cc banking.hh
+banking.o: banking.cc banking.hh banking.h
 	g++ ${CPPFLAGS} -fPIC -c banking.cc
 
 lib: banking.o

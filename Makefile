@@ -1,5 +1,5 @@
 GCC = gcc
-
+CFLAGS = -L banking -I. -lbanking
 
 all: lib exe
 
@@ -7,7 +7,7 @@ lib:
 	$(MAKE) -C banking
 
 exe: bank_example.c
-	$(GCC) -L banking -I. -o bank_example.exe bank_example.c -lbanking
+	$(GCC) -o bank_example.exe bank_example.c $(CFLAGS)
 
 clean:
 	$(MAKE) -C banking clean
