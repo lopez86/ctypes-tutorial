@@ -28,20 +28,22 @@ void print_result(const struct Receipt receipt) {
  * Creates a bank and runs some commands, printing out results.
  */ 
 int main() {
+    printf("Creating bank\n");
     struct BankHandler* handler = createBank();
-    struct Receipt result;
-
+    printf("Creating account\n");
     createAccount(handler, "bill gates", "msft", 100);
-    result = checkBalance(handler, "jeff bezos", "amzn");
-    print_result(result);
-    result = checkBalance(handler, "bill gates", "msft");
-    print_result(result);
-    result = deposit(handler, "bill gates", "msft", 10);
-    print_result(result);
-    result = withdraw(handler, "bill gates", "msft", 15);
-    print_result(result);
-    result = withdraw(handler, "bill gates", "msft", 1000);
-    print_result(result);
+    printf("Checking balance, wrong account\n");
+    print_result(checkBalance(handler, "jeff bezos", "amzn"));
+    printf("Checking balance, wrong password\n");
+    print_result(checkBalance(handler, "bill gates", "amzn"));
+    printf("Checking balance\n");
+    print_result(checkBalance(handler, "bill gates", "msft"));
+    printf("Deposit money\n");
+    print_result(deposit(handler, "bill gates", "msft", 10));
+    printf("Withdraw money\n");
+    print_result(withdraw(handler, "bill gates", "msft", 15));
+    printf("Trying to withdraw too much\n");
+    print_result(withdraw(handler, "bill gates", "msft", 1000));
 
     destroyBank(handler);
     return 0;
