@@ -24,6 +24,8 @@ extern "C" {
         void* bank; ///< The bank, must be of type Bank
     };
 
+    // We'll make these extern so that they can be read directly in python
+    // but this also means that the definitions can't be seen in the header
     extern const int SUCCESS; ///< Successful operation
     extern const int AUTH_FAILED; ///< Authorization failed somehow
     extern const int INSUFFICIENT_FUNDS; ///< Not enough funds for the transaction
