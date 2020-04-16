@@ -7,10 +7,10 @@ _BANK_PATH = os.path.join(os.path.dirname(__file__), "libbanking.so")
 _BANKING_LIB = cdll.LoadLibrary(_BANK_PATH)
 
 
-def encode_username(username: str) -> c_char_p:
-    """Encode a username for use in the C code."""
-    encoded_name = username.encode(encoding="utf-8")
-    return c_char_p(encoded_name)
+def encode_text(text: str) -> c_char_p:
+    """Encode some text for use in the C code."""
+    encoded_text = text.encode(encoding="utf-8")
+    return c_char_p(encoded_text)
 
 
 class RECEIPT(Structure):
@@ -31,13 +31,13 @@ _BANKING_LIB.createBank.argtypes = []
 _BANKING_LIB.createBank.restype = POINTER(BANKING_HANDLER)
 _BANKING_LIB.destroyBank.argtypes = [POINTER(BANKING_HANDLER)]
 _BANKING_LIB.destroyBank.restype = None
-_BANKING_LIB.createAccount.argtypes = [POINTER(BANKING_HANDLER), c_char_p, c_int]
+_BANKING_LIB.createAccount.argtypes = [POINTER(BANKING_HANDLER), c_char_p, c_char_p, c_int]
 _BANKING_LIB.createAccount.restype = RECEIPT
-_BANKING_LIB.checkBalance.argtypes = [POINTER(BANKING_HANDLER), c_char_p]
+_BANKING_LIB.checkBalance.argtypes = [POINTER(BANKING_HANDLER), c_char_p, c_char_p]
 _BANKING_LIB.checkBalance.restype = RECEIPT
-_BANKING_LIB.deposit.argtypes = [POINTER(BANKING_HANDLER), c_char_p, c_int]
+_BANKING_LIB.deposit.argtypes = [POINTER(BANKING_HANDLER), c_char_p, c_char_p, c_int]
 _BANKING_LIB.deposit.restype = RECEIPT
-_BANKING_LIB.withdraw.argtypes = [POINTER(BANKING_HANDLER), c_char_p, c_int]
+_BANKING_LIB.withdraw.argtypes = [POINTER(BANKING_HANDLER), c_char_p, c_char_p, c_int]
 _BANKING_LIB.withdraw.restype = RECEIPT
 
 CREATE_BANK_FN = _BANKING_LIB.createBank

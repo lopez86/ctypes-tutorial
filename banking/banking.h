@@ -37,14 +37,20 @@ extern "C" {
     void destroyBank(struct BankHandler* bankHandler);
     /** Create a new account and deposit funds into it. */
     const struct Receipt createAccount(
-        struct BankHandler* handler, const char* username, int balance
+        struct BankHandler* handler, const char* username, const char* password, int balance
     );
     /** Check the balance of an account. */
-    const struct Receipt checkBalance(struct BankHandler* handler, const char* username);
+    const struct Receipt checkBalance(
+        struct BankHandler* handler, const char* username, const char* password
+    );
     /** Deposit some cash into an account. */
-    const struct Receipt deposit(struct BankHandler* handler, const char* username, int value);
+    const struct Receipt deposit(
+        struct BankHandler* handler, const char* username, const char* password, int value
+    );
     /** Withdraw some cash from an account. */
-    const struct Receipt withdraw(struct BankHandler* handler, const char* username, int value);
+    const struct Receipt withdraw(
+        struct BankHandler* handler, const char* username, const char* password, int value
+    );
 #ifdef __cplusplus
 }
 #endif

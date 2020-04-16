@@ -1,4 +1,5 @@
 #include "banking.hh"
+#include "security.hh"
 
 
 int BankAccount::totalAccounts = 0;
@@ -8,7 +9,31 @@ const int AUTH_FAILED = 1;
 const int INSUFFICIENT_FUNDS = 2;
 const int OTHER_ERROR = 3;
 
-BankAccount::BankAccount(std::string uname, int bal) : username(uname), userid(totalAccounts), balance(bal) {
+
+/**
+ * Function to handle getting an account and verifying its credentials.
+ */
+std::shared_ptr<BankAccount> getValidatedAccount(
+    BankHandler* handler, std::string username, std::string password    
+) {
+    Bank* bank = static_cast<Bank*> (handler->bank);
+    auto account = bank->getAccount(username);
+    if (
+        !account ||
+        !security::superSecretCheckHashFunction(password, account->getPasswordHash())
+
+    ) {
+        return nullptr;
+    }
+    return account;
+}
+
+
+BankAccount::BankAccount(std::string uname, std::string pwd, int bal) : 
+    username(uname),
+    passwordHash(pwd),
+    userid(totalAccounts),
+    balance(bal) {
     ++totalAccounts;
 }
 
@@ -50,48 +75,49 @@ void destroyBank(BankHandler* bankHandler) {
     delete bankHandler;
 }
 
-const Receipt createAccount(BankHandler* handler, const char* username, int balance) {
+const Receipt createAccount(
+    BankHandler* handler, const char* username, const char* password, int balance
+) {
     Bank* bank = static_cast<Bank*> (handler->bank);
-    std::string name(username);
-    const Receipt receipt = bank->addAccount(name, balance);
+    std::string pwdHash = security::superSecretHashFunction(password);
+    auto newAccount = std::make_shared<BankAccount>(BankAccount{username, pwdHash, balance});
+    const Receipt receipt = bank->addAccount(newAccount);
     return receipt;
 }
 
- const Receipt checkBalance(BankHandler* handler, const char* username) {
-    Bank* bank = static_cast<Bank*> (handler->bank);
-    std::string name(username);
-    auto account = bank->getAccount(name);
-    Receipt receipt;
+ const Receipt checkBalance(BankHandler* handler, const char* username, const char* password) {
+    auto account = getValidatedAccount(handler, username, password);
     if (!account) {
-        receipt = {AUTH_FAILED, 0, 0};
+        return {AUTH_FAILED, 0, 0};
     }
-    else receipt = account->checkBalance();
-    return receipt;
+    return account->checkBalance();
 }
 
-const Receipt deposit(BankHandler* handler, const char* username, int value) {
-    Bank* bank = static_cast<Bank*> (handler->bank);
-    auto account = bank->getAccount(username);
-    if (!account) return {AUTH_FAILED, 0, 0};
+const Receipt deposit(BankHandler* handler, const char* username, const char* password, int value) {
+    auto account = getValidatedAccount(handler, username, password);
+    if (!account) {
+        return {AUTH_FAILED, value, 0};
+    }
     return account->deposit(value);
 }
 
-const Receipt withdraw(BankHandler* handler, const char* username, int value) {
-    Bank* bank = static_cast<Bank*> (handler->bank);
-    auto account = bank->getAccount(username);
-    if (!account) return {AUTH_FAILED, 0, 0};
+const Receipt withdraw(BankHandler* handler, const char* username, const char* password, int value) {
+    auto account = getValidatedAccount(handler, username, password);
+    if (!account) {
+        return {AUTH_FAILED, 0, 0};
+    }
     return account->withdraw(value);
 }
 
 
 const Receipt 
-Bank::addAccount(const std::string username, int balance) {
-    auto existing_account = getAccount(username);
+Bank::addAccount(std::shared_ptr<BankAccount> newAccount) {
+    auto existing_account = getAccount(newAccount->getUsername());
     if (existing_account != nullptr) {
-        return {AUTH_FAILED, balance, 0};
+        return {AUTH_FAILED, newAccount->getBalance(), 0};
     }
-    accounts[username] = std::make_shared<BankAccount>(BankAccount{username, balance});
-    return {SUCCESS, 0, balance};
+    accounts[newAccount->getUsername()] = newAccount;
+    return {SUCCESS, 0, newAccount->getBalance()};
 }
 
 std::shared_ptr<BankAccount> 

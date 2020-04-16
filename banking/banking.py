@@ -31,10 +31,13 @@ class Bank:
         """Clear any memory associated with the data structures."""
         _bank_interface.DESTROY_BANK_FN(self.handler)
 
-    def create_account(self, username: str, balance: int) -> Receipt:
+    def create_account(self, username: str, password: str, balance: int) -> Receipt:
         """Create a new account with a given balance."""
         receipt = _bank_interface.CREATE_ACCOUNT_FN(
-            self.handler, _bank_interface.encode_username(username), balance
+            self.handler,
+            _bank_interface.encode_text(username),
+            _bank_interface.encode_text(password),
+            balance,
         )
         result = Receipt(
             status_code=receipt.status,
@@ -43,10 +46,12 @@ class Bank:
         )
         return result
 
-    def check_balance(self, username: str) -> Receipt:
+    def check_balance(self, username: str, password: str) -> Receipt:
         """Check the balance of an account."""
         receipt = _bank_interface.CHECK_BALANCE_FN(
-            self.handler, _bank_interface.encode_username(username)
+            self.handler,
+            _bank_interface.encode_text(username),
+            _bank_interface.encode_text(password),
         )
         result = Receipt(
             status_code=receipt.status,
@@ -55,10 +60,13 @@ class Bank:
         )
         return result
 
-    def deposit(self, username: str, value: int) -> Receipt:
+    def deposit(self, username: str, password: str, value: int) -> Receipt:
         """Deposit some money into an account."""
         receipt = _bank_interface.DEPOSIT_FN(
-            self.handler, _bank_interface.encode_username(username), value
+            self.handler,
+            _bank_interface.encode_text(username),
+            _bank_interface.encode_text(password),
+            value,
         )
         result = Receipt(
             status_code=receipt.status,
@@ -67,10 +75,13 @@ class Bank:
         )
         return result
 
-    def withdraw(self, username: str, value: str) -> Receipt:
+    def withdraw(self, username: str, password: str, value: str) -> Receipt:
         """Withdraw some money from an account."""
         receipt = _bank_interface.WITHDRAW_FN(
-            self.handler, _bank_interface.encode_username(username), value
+            self.handler,
+            _bank_interface.encode_text(username),
+            _bank_interface.encode_text(password),
+            value,
         )
         result = Receipt(
             status_code=receipt.status,

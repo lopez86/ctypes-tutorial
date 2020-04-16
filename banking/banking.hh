@@ -30,7 +30,7 @@
 class BankAccount {
     public:
         /** Constructor for a new bank account. */
-        BankAccount(const std::string username, int balance);
+        BankAccount(const std::string username, const std::string passwordHash, int balance);
         /** Destructor. */
         virtual ~BankAccount() {}
 
@@ -45,9 +45,14 @@ class BankAccount {
         int getUserid() const {return userid;}
         /** Get the user name. */
         std::string getUsername() const {return username;}
+        /** Get the password hash. */
+        std::string getPasswordHash() const {return passwordHash;}
+        /** Get the balance. */
+        int getBalance() const {return balance;}
 
     private:
         std::string username; ///< The unique username
+        std::string passwordHash; ///< The hash of the password
         int userid; ///< The internal user id
         int balance; ///< The balance in the account
 
@@ -72,7 +77,7 @@ class Bank {
         virtual ~Bank(){}
 
         /** Add a new account. */
-        const Receipt addAccount(const std::string username, int balance);
+        const Receipt addAccount(std::shared_ptr<BankAccount> newAccount);
         /** Get an account. */
         std::shared_ptr<BankAccount> getAccount(const std::string username);
         /** Get an account, const version. */

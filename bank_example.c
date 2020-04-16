@@ -31,16 +31,16 @@ int main() {
     struct BankHandler* handler = createBank();
     struct Receipt result;
 
-    createAccount(handler, "bill gates", 100);
-    result = checkBalance(handler, "jeff bezos");
+    createAccount(handler, "bill gates", "msft", 100);
+    result = checkBalance(handler, "jeff bezos", "amzn");
     print_result(result);
-    result = checkBalance(handler, "bill gates");
+    result = checkBalance(handler, "bill gates", "msft");
     print_result(result);
-    result = deposit(handler, "bill gates", 10);
+    result = deposit(handler, "bill gates", "msft", 10);
     print_result(result);
-    result = withdraw(handler, "bill gates", 15);
+    result = withdraw(handler, "bill gates", "msft", 15);
     print_result(result);
-    result = withdraw(handler, "bill gates", 1000);
+    result = withdraw(handler, "bill gates", "msft", 1000);
     print_result(result);
 
     destroyBank(handler);

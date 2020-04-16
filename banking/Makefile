@@ -6,8 +6,11 @@ all: lib
 banking.o: banking.cc banking.hh banking.h
 	g++ ${CPPFLAGS} -fPIC -c banking.cc
 
-lib: banking.o
-	g++ ${CPPFLAGS} ${LIBFLAGS} -o libbanking.so banking.o
+security.o: security.cc security.hh
+	g++ ${CPPFLAGS} -fPIC -c security.cc
+
+lib: banking.o security.o
+	g++ ${CPPFLAGS} ${LIBFLAGS} -o libbanking.so banking.o security.o
 
 clean:
-	rm -f libbanking.so banking.o
+	rm -f libbanking.so banking.o security.o
